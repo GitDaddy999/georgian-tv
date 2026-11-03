@@ -18,6 +18,9 @@ var PLAYLIST_SOURCES = [
   'https://raw.githubusercontent.com/iptv-org/iptv/master/streams/ge.m3u'
 ];
 
+// Only these channels are shown (the online list is used just to refresh their addresses).
+var ONLY_BUILTIN = true;
+
 var BUILTIN_CHANNELS = [
   { id: '1TV.ge', name: '1TV', ka: 'პირველი არხი', urls: [
       'https://tv.cdn.xsg.ge/gpb-1tv/index.m3u8',
@@ -28,33 +31,21 @@ var BUILTIN_CHANNELS = [
       'https://tv.cdn.xsg.ge/imedihd/index.m3u8',
       'http://nue01-edge01.itdc.ge/imedihd/mpegts' ] },
   { id: 'Rustavi2.ge', name: 'Rustavi 2', ka: 'რუსთავი 2', urls: [
-      'http://nue01-edge01.itdc.ge/rustavi2hqnew/mpegts',
-      'http://31.146.5.178:8087/play/a008/index.m3u8' ] },
+      'http://31.146.5.178:8087/play/a008/index.m3u8',
+      'http://nue01-edge01.itdc.ge/rustavi2hqnew/mpegts' ] },
   { id: 'Formula.ge', name: 'Formula', ka: 'ფორმულა', urls: [
       'https://c4635.cdn.xsg.ge/c4635/TVFormula/index.m3u8',
       'https://tv.cdn.xsg.ge/c4635/TVFormula/playlist.m3u8' ] },
-  { id: 'TVPirveli.ge', name: 'TV Pirveli', ka: 'ტვ პირველი', urls: [
-      'http://nue01-edge01.itdc.ge/pirvelitv/mpegts' ] },
   { id: 'PalitraNews.ge', name: 'Palitra News', ka: 'პალიტრა ნიუსი', urls: [
       'https://live.palitranews.ge/hls/palitratv/index.m3u8',
       'https://livestream.palitra.ge/hls/palitratv/index.m3u8' ] },
+  { id: 'TVPirveli.ge', name: 'TV Pirveli', ka: 'ტვ პირველი', urls: [
+      'http://nue01-edge01.itdc.ge/pirvelitv/mpegts' ] },
   { id: 'EuronewsGeorgia.ge', name: 'Euronews Georgia', ka: 'ევრონიუსი საქართველო', urls: [
-      'http://nue01-edge01.itdc.ge/euronewsgeorgia/mpegts' ] },
-  { id: 'TVC.ge', name: 'TVC', ka: '', urls: [
-      'http://31.146.5.178:8087/play/a009/index.m3u8' ] },
-  { id: 'ComedyTV.ge', name: 'Comedy TV', ka: 'კომედი', urls: [
-      'http://31.146.5.178:8087/play/a00b/index.m3u8' ] },
-  { id: 'GDSTV.ge', name: 'GDS TV', ka: '', urls: [
-      'http://31.146.5.178:8087/play/a00a/index.m3u8' ] },
-  { id: 'ObieqtiviTV.ge', name: 'Obieqtivi TV', ka: 'ობიექტივი', urls: [
-      'https://live20.bozztv.com/dvrfl05/gin-obieqtivitv/index.m3u8' ] },
-  { id: 'BMGTV.ge', name: 'BMG TV', ka: '', urls: [
-      'https://tv.nucast.tv/lb/ge/bmg/index.m3u8' ] },
-  { id: 'RioniTV.ge', name: 'Rioni TV', ka: 'რიონი', urls: [
-      'http://video.rionitv.com:9090/hls/live/rioni.m3u8' ] },
-  { id: 'Ertsulovneba.ge', name: 'Ertsulovneba', ka: 'ერთსულოვნება', urls: [
-      'https://stream.sstv.ge/live/sstv/playlist.m3u8' ] }
+      'http://nue01-edge01.itdc.ge/euronewsgeorgia/mpegts' ] }
 ];
+
+var DEFAULT_CHANNEL_ID = 'ImediTV.ge';   // channel shown every time the player opens
 
 /* ---------- playlist parsing / merging ---------- */
 
@@ -104,6 +95,7 @@ function mergeChannels(builtin, entries) {
     var key = channelKey(e.id, e.rawName);
     var target = byKey[key] || byKey[channelKey('', e.rawName)];
     if (!target) {
+      if (typeof ONLY_BUILTIN !== 'undefined' && ONLY_BUILTIN) continue;
       target = { id: e.id, name: cleanName(e.rawName), ka: '', urls: [] };
       list.push(target);
       byKey[key] = target;

@@ -345,6 +345,60 @@
     return out;
   }
 
+  /* ---------------- on-screen buttons (TV browser pointer / mouse) ---------------- */
+  var barTimer = null;
+  function showBar() {
+    show($('toolbar'), true);
+    clearTimeout(barTimer);
+    barTimer = setTimeout(function () { if (!visible($('list'))) show($('toolbar'), false); }, 6000);
+  }
+
+  function isFullscreen() {
+    var d = document;
+    return !!(d.fullscreenElement || d.webkitFullscreenElement || d.webkitCurrentFullScreenElement || d.webkitIsFullScreen);
+  }
+
+  function toggleFullscreen() {
+    var d = document, el = d.documentElement;
+    try {
+      if (isFullscreen()) {
+        var exit = d.exitFullscreen || d.webkitExitFullscreen || d.webkitCancelFullScreen;
+        if (exit) exit.call(d);
+        return;
+      }
+      var req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
+      if (req) { req.call(el); return; }
+      var v = $('html-player');
+      if (v && v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); return; }
+    } catch (e) {}
+    toast('This browser does not allow full screen. Try the browser menu instead.');
+  }
+
+  function setupToolbar() {
+    if (Player.native) return;            // the installed TV app is already full screen
+    show($('toolbar'), true);
+    $('btn-list').onclick = function () { if (visible($('list'))) closeList(); else openList(); showBar(); };
+    $('btn-prev').onclick = function () { tune(cur - 1); showBar(); };
+    $('btn-next').onclick = function () { tune(cur + 1); showBar(); };
+    $('btn-full').onclick = function () { toggleFullscreen(); showBar(); };
+    $('btn-retry').onclick = function () { tune(cur); showBar(); };
+    // click a channel in the list to watch it
+    $('channels').onclick = function (e) {
+      var el = e.target || e.srcElement;
+      while (el && el.tagName !== 'LI') el = el.parentNode;
+      if (!el) return;
+      var i = parseInt(el.getAttribute('data-i'), 10);
+      closeList();
+      tune(i);
+      showBar();
+    };
+    var onMove = function () { showBar(); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mousedown', onMove);
+    document.addEventListener('keydown', onMove);
+    showBar();
+  }
+
   /* ---------------- start ---------------- */
   function init() {
     var boot = document.getElementById('boot');
@@ -355,14 +409,15 @@
     document.addEventListener('keydown', onKey);
 
     var cached = load('gtv.playlist');
-    var idx = applyPlaylist(cached);
+    applyPlaylist(cached);
     $('list-status').textContent = channels.length + ' channels';
-    tune(idx >= 0 ? idx : 0);
-
-    if (!load('gtv.seenHint')) {
-      save('gtv.seenHint', '1');
-      setTimeout(function () { toast('Press OK for the channel list · ▲▼ or CH+/CH− to switch channels', 6000); }, 1500);
+    // always start on the default channel (Imedi)
+    var start = 0;
+    for (var i = 0; i < channels.length; i++) {
+      if (channels[i].id === (typeof DEFAULT_CHANNEL_ID !== 'undefined' ? DEFAULT_CHANNEL_ID : '')) start = i;
     }
+    tune(start);
+    setupToolbar();
 
     refreshPlaylist(false);
     setInterval(function () { refreshPlaylist(false); }, 6 * 3600 * 1000);

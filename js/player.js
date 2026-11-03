@@ -60,16 +60,29 @@ var Player = (function () {
     }
   }
 
-  function htmlPlay(url, cb, my) {
+  // TV browsers have a hardware HLS player; JavaScript decoding (hls.js) is too heavy for them.
+  var isTV = /Tizen|SMART-TV|SmartTV|SMART TV|Maple|HbbTV|NetCast|Web0S/i.test(navigator.userAgent);
+
+  function htmlPlay(url, cb, my, useHls) {
     video = video || document.getElementById('html-player');
     htmlStop();
-    video.onplaying = function () { if (my === session) cb.onPlaying(); };
-    video.onwaiting = function () { if (my === session) cb.onBuffering(0); };
-    video.onerror = function () { if (my === session) cb.onError('Video error'); };
     var isHls = /\.m3u8(\?|$)/i.test(url);
     var native = video.canPlayType('application/vnd.apple.mpegurl');
-    if (isHls && !native && window.Hls && Hls.isSupported()) {
-      hls = new Hls({ liveSyncDurationCount: 3, manifestLoadingMaxRetry: 2, levelLoadingMaxRetry: 2 });
+    var canHlsJs = !!(window.Hls && Hls.isSupported());
+    if (useHls === undefined) useHls = isHls && canHlsJs && !native && !isTV;
+    video.onplaying = function () { if (my === session) cb.onPlaying(); };
+    video.onwaiting = function () { if (my === session) cb.onBuffering(0); };
+    video.onerror = function () {
+      if (my !== session) return;
+      // the built-in player could not open it: try the JavaScript player once
+      if (!useHls && isHls && canHlsJs) htmlPlay(url, cb, my, true);
+      else cb.onError('Video error');
+    };
+    if (useHls) {
+      hls = new Hls({
+        liveSyncDurationCount: 3, maxBufferLength: 20, startLevel: 0,
+        capLevelToPlayerSize: true, manifestLoadingMaxRetry: 2, levelLoadingMaxRetry: 2
+      });
       hls.on(Hls.Events.ERROR, function (ev, data) {
         if (my === session && data.fatal) cb.onError('Stream error: ' + data.details);
       });

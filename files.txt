@@ -1,0 +1,11 @@
+index.html
+css/style.css
+js/app.js
+js/channels.js
+js/player.js
+js/hls.min.js
+icon.png
+fonts/noto-sans-georgian-georgian-400-normal.woff
+fonts/noto-sans-georgian-georgian-400-normal.woff2
+fonts/noto-sans-georgian-georgian-700-normal.woff
+fonts/noto-sans-georgian-georgian-700-normal.woff2

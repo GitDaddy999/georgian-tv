@@ -9,7 +9,7 @@
   <script src="$WEBAPIS/webapis/webapis.js"></script>
 </head>
 <body>
-  <div id="boot" style="position:absolute;left:0;top:0;width:100%;padding:40px;font:40px Arial,sans-serif;color:#fff;background:#000;z-index:1">Georgian TV is loading&hellip; (v2)<br><span id="boot-msg" style="font-size:28px;color:#aaa"></span></div>
+  <div id="boot" style="position:absolute;left:0;top:0;width:100%;padding:40px;font:40px Arial,sans-serif;color:#fff;background:#000;z-index:1">Georgian TV is loading&hellip; (v3)<br><span id="boot-msg" style="font-size:28px;color:#aaa"></span></div>
   <script>window.onerror=function(m,u,l){var e=document.getElementById("boot-msg");if(e)e.innerHTML+="Error: "+m+" ("+(u||"").split("/").pop()+":"+l+")<br>";};</script>
   <!-- Video layers: AVPlay object on the TV, <video> when testing in a PC browser -->
   <object id="av-player" type="application/avplayer"></object>
@@ -23,7 +23,7 @@
       <div id="list-status"></div>
     </header>
     <ul id="channels"></ul>
-    <footer>▲▼ choose &nbsp;·&nbsp; OK watch &nbsp;·&nbsp; ◀ / BACK close &nbsp;·&nbsp; 0–9 channel number</footer>
+    <footer>Click a channel to watch &nbsp;·&nbsp; ▲▼ + OK also work &nbsp;·&nbsp; 0–9 channel number</footer>
   </aside>
 
   <section id="osd" class="hidden">
@@ -37,6 +37,14 @@
       <div id="osd-state"></div>
     </div>
   </section>
+
+  <nav id="toolbar" class="hidden">
+    <button id="btn-list">☰ Channels</button>
+    <button id="btn-prev">▲ Prev</button>
+    <button id="btn-next">▼ Next</button>
+    <button id="btn-retry">⟳ Reload</button>
+    <button id="btn-full">⛶ Full screen</button>
+  </nav>
 
   <div id="numentry" class="hidden"></div>
   <div id="toast" class="hidden"></div>
