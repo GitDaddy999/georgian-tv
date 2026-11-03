@@ -347,6 +347,8 @@
 
   /* ---------------- start ---------------- */
   function init() {
+    var boot = document.getElementById('boot');
+    if (boot) boot.parentNode.removeChild(boot);
     fitToWindow();
     window.addEventListener('resize', fitToWindow);
     registerKeys();
