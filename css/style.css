@@ -1,0 +1,139 @@
+@font-face {
+  font-family: "GeoSans";
+  font-weight: 400;
+  src: url("../fonts/noto-sans-georgian-georgian-400-normal.woff2") format("woff2"),
+       url("../fonts/noto-sans-georgian-georgian-400-normal.woff") format("woff");
+}
+@font-face {
+  font-family: "GeoSans";
+  font-weight: 700;
+  src: url("../fonts/noto-sans-georgian-georgian-700-normal.woff2") format("woff2"),
+       url("../fonts/noto-sans-georgian-georgian-700-normal.woff") format("woff");
+}
+
+/* colors are written out directly (older Samsung TVs do not support CSS variables) */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #000; }
+html, body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: transparent;          /* AVPlay video is drawn underneath the page */
+  color: #f4f5f7;
+  font-family: "SamsungOne", "TizenSans", "Segoe UI", Arial, "GeoSans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body.html5 { background: #000; }
+
+.ka { font-family: "GeoSans", sans-serif; }
+.hidden { display: none !important; }
+
+#av-player, #html-player {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+}
+#html-player { background: #000; display: none; }
+body.html5 #html-player { display: block; }
+body.html5 #av-player { display: none; }
+
+/* ---------- Channel list ---------- */
+#list {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 640px;
+  background: rgba(12, 16, 26, 0.92);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex; -webkit-box-orient: vertical; -webkit-box-direction: normal; -webkit-flex-direction: column; flex-direction: column;
+  padding: 44px 0 0;
+}
+#list header { padding: 0 48px 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.brand { font-size: 38px; font-weight: 700; letter-spacing: 0.3px; }
+.brand .ka { display: block; font-size: 22px; font-weight: 400; color: #9aa3b2; margin-top: 4px; }
+.brand .dot {
+  display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+  background: #e0263a; margin-right: 14px; vertical-align: middle; position: relative; top: -3px;
+}
+#list-status { font-size: 20px; color: #9aa3b2; margin-top: 12px; min-height: 26px; }
+
+#channels { list-style: none; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; overflow: hidden; position: relative; padding: 16px 0; }
+#channels li {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex; -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+  height: 92px; margin: 0 24px 6px; padding: 0 24px;
+  border-radius: 14px; border: 3px solid transparent;
+}
+#channels li .num {
+  width: 64px; height: 64px; border-radius: 12px; -webkit-box-flex: 0; -webkit-flex: none; flex: none;
+  background: rgba(255,255,255,0.08);
+  font-size: 28px; font-weight: 700; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-align: center; -webkit-align-items: center; align-items: center; -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+}
+#channels li .names { margin-left: 24px; overflow: hidden; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; }
+#channels li .en { font-size: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#channels li .ka { font-size: 21px; color: #9aa3b2; margin-top: 2px; white-space: nowrap; }
+#channels li .now {
+  font-size: 18px; font-weight: 700; color: #38d27a; letter-spacing: 1px; text-transform: uppercase;
+  margin-left: 12px;
+}
+#channels li.focused { background: rgba(255,255,255,0.12); border-color: #ffffff; }
+#channels li.focused .num { background: #e0263a; }
+
+#list footer {
+  padding: 22px 48px 34px; font-size: 20px; color: #9aa3b2;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Info banner ---------- */
+#osd {
+  position: absolute; left: 80px; right: 80px; bottom: 64px; height: 150px;
+  background: rgba(12, 16, 26, 0.92); border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.08);
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex; -webkit-box-align: center; -webkit-align-items: center; align-items: center; padding: 0 44px;
+}
+#osd-num {
+  width: 96px; height: 96px; border-radius: 18px; background: #e0263a;
+  font-size: 46px; font-weight: 700; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-align: center; -webkit-align-items: center; align-items: center; -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center; -webkit-box-flex: 0; -webkit-flex: none; flex: none;
+}
+.osd-main { margin-left: 36px; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; overflow: hidden; }
+#osd-name { font-size: 50px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#osd-ka { font-family: "GeoSans", sans-serif; font-size: 26px; color: #9aa3b2; margin-top: 4px; }
+.osd-side { text-align: right; }
+#osd-clock { font-size: 40px; font-weight: 700; }
+#osd-state { font-size: 24px; color: #9aa3b2; margin-top: 6px; }
+#osd-state.live { color: #38d27a; }
+#osd-state.bad { color: #ff8a8a; }
+
+/* ---------- Spinner / number entry / toast ---------- */
+#spinner {
+  position: absolute; left: 50%; top: 50%; -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%);
+  text-align: center;
+}
+#spinner .ring {
+  width: 96px; height: 96px; margin: 0 auto; border-radius: 50%;
+  border: 8px solid rgba(255,255,255,0.18); border-top-color: #e0263a;
+  -webkit-animation: spin 0.9s linear infinite;
+          animation: spin 0.9s linear infinite;
+}
+#spinner-text {
+  margin-top: 22px; font-size: 28px; padding: 8px 20px; border-radius: 10px;
+  background: rgba(0,0,0,0.55);
+}
+@-webkit-keyframes spin { to { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+@keyframes spin { to { -webkit-transform: rotate(360deg); transform: rotate(360deg); } }
+
+#numentry {
+  position: absolute; right: 90px; top: 70px; min-width: 150px; padding: 10px 30px;
+  background: rgba(12, 16, 26, 0.92); border-radius: 18px; border: 2px solid #e0263a;
+  font-size: 80px; font-weight: 700; text-align: center;
+}
+
+#toast {
+  position: absolute; left: 50%; top: 80px; -webkit-transform: translateX(-50%); transform: translateX(-50%);
+  background: rgba(12, 16, 26, 0.92); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;
+  padding: 20px 40px; font-size: 30px; max-width: 1300px; text-align: center;
+}
+
+/* keep notifications clear of the channel list when it is open */
+#list:not(.hidden) ~ #toast { left: 1280px; max-width: 1100px; }

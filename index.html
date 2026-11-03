@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1920, user-scalable=no">
+  <title>Georgian TV</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Samsung TV APIs (AVPlay). Only exists on the TV; harmless elsewhere. -->
+  <script src="$WEBAPIS/webapis/webapis.js"></script>
+</head>
+<body>
+  <!-- Video layers: AVPlay object on the TV, <video> when testing in a PC browser -->
+  <object id="av-player" type="application/avplayer"></object>
+  <video id="html-player" autoplay playsinline></video>
+
+  <div id="spinner" class="hidden"><div class="ring"></div><div id="spinner-text">Connecting…</div></div>
+
+  <aside id="list" class="hidden">
+    <header>
+      <div class="brand"><span class="dot"></span>Georgian TV <span class="ka">ქართული ტელევიზია</span></div>
+      <div id="list-status"></div>
+    </header>
+    <ul id="channels"></ul>
+    <footer>▲▼ choose &nbsp;·&nbsp; OK watch &nbsp;·&nbsp; ◀ / BACK close &nbsp;·&nbsp; 0–9 channel number</footer>
+  </aside>
+
+  <section id="osd" class="hidden">
+    <div id="osd-num"></div>
+    <div class="osd-main">
+      <div id="osd-name"></div>
+      <div id="osd-ka"></div>
+    </div>
+    <div class="osd-side">
+      <div id="osd-clock"></div>
+      <div id="osd-state"></div>
+    </div>
+  </section>
+
+  <div id="numentry" class="hidden"></div>
+  <div id="toast" class="hidden"></div>
+
+  <script src="js/hls.min.js"></script>
+  <script src="js/channels.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
