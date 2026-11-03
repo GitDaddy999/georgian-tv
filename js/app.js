@@ -156,6 +156,7 @@
 
   function onPlaying() {
     clearTimeout(watchdog); watchdog = null;
+    if (playing) return;
     playing = true;
     spinner(false);
     setState('● Live', 'live');

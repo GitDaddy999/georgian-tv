@@ -55,7 +55,7 @@ var Player = (function () {
   function htmlStop() {
     if (hls) { try { hls.destroy(); } catch (e) {} hls = null; }
     if (video) {
-      video.onplaying = video.onwaiting = video.onerror = null;
+      video.onplaying = video.onwaiting = video.onerror = video.ontimeupdate = null;
       try { video.pause(); video.removeAttribute('src'); video.load(); } catch (e) {}
     }
   }
@@ -72,6 +72,14 @@ var Player = (function () {
     if (useHls === undefined) useHls = isHls && canHlsJs && !native && !isTV;
     video.onplaying = function () { if (my === session) cb.onPlaying(); };
     video.onwaiting = function () { if (my === session) cb.onBuffering(0); };
+    // Old TV browsers often don't fire 'playing' again after a short stall,
+    // so treat "the picture is moving" (currentTime advancing) as playing.
+    var lastT = -1;
+    video.ontimeupdate = function () {
+      if (my !== session) return;
+      var t = video.currentTime;
+      if (t !== lastT) { if (lastT >= 0) cb.onPlaying(); lastT = t; }
+    };
     video.onerror = function () {
       if (my !== session) return;
       // the built-in player could not open it: try the JavaScript player once
