@@ -13,6 +13,7 @@
  */
 
 var PLAYLIST_SOURCES = [
+  'ge.m3u',   // copy kept fresh by the home server (works without https)
   'https://iptv-org.github.io/iptv/countries/ge.m3u',
   'https://raw.githubusercontent.com/iptv-org/iptv/master/streams/ge.m3u'
 ];
